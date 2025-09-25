@@ -1,1 +1,98 @@
-<p>appointments works!</p>
+<div class="appointments-container">
+  <div class="header">
+    <h1 class="title">Patient Appointments</h1>
+    <div class="header-stats">
+      <div class="stat-card">
+        <span class="stat-number">{{ patients.length }}</span>
+        <span class="stat-label">Total Patients</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ getConfirmedCount() }}</span>
+        <span class="stat-label">Confirmed</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ getPendingCount() }}</span>
+        <span class="stat-label">Pending</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ getCancelledCount() }}</span>
+        <span class="stat-label">Cancelled</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="appointments-list">
+    <div *ngFor="let patient of patients" class="appointment-card">
+      <div class="appointment-header">
+        <div class="patient-info">
+          <h3 class="patient-name">{{ patient.firstName }} {{ patient.lastName }}</h3>
+          <span class="patient-id">ID: {{ patient.patientId }}</span>
+        </div>
+        <div class="appointment-meta">
+          <span class="appointment-type">{{ patient.appointmentType }}</span>
+          <span class="status-badge" [class]="getStatusClass(patient.appointmentStatus)">
+            {{ patient.appointmentStatus }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="appointment-details">
+        <div class="detail-group">
+          <div class="detail-item">
+            <span class="detail-label">Age/Gender:</span>
+            <span class="detail-value">{{ calculateAge(patient.dateOfBirth) }} / {{ patient.gender }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Phone:</span>
+            <span class="detail-value">{{ patient.phone }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Email:</span>
+            <span class="detail-value">{{ patient.email }}</span>
+          </div>
+        </div>
+        
+        <div class="detail-group">
+          <div class="detail-item">
+            <span class="detail-label">Department:</span>
+            <span class="detail-value department-badge">{{ patient.department }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Physician:</span>
+            <span class="detail-value">{{ patient.primaryPhysician }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Insurance:</span>
+            <span class="detail-value">{{ patient.insurance }}</span>
+          </div>
+        </div>
+        
+        <div class="appointment-time">
+          <div class="time-slot">
+            <span class="date-label">Next Appointment:</span>
+            <span class="date-value">{{ patient.nextAppointment }}</span>
+            <span class="time-value">{{ patient.appointmentTime }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="appointment-actions">
+        <button class="btn btn-confirm" 
+                (click)="confirmAppointment(patient.id)"
+                [disabled]="patient.appointmentStatus === 'confirmed' || patient.appointmentStatus === 'cancelled'">
+          Confirm
+        </button>
+        <button class="btn btn-reschedule" 
+                (click)="rescheduleAppointment(patient.id)"
+                [disabled]="patient.appointmentStatus === 'cancelled'">
+          Reschedule
+        </button>
+        <button class="btn btn-cancel" 
+                (click)="cancelAppointment(patient.id)"
+                [disabled]="patient.appointmentStatus === 'cancelled'">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

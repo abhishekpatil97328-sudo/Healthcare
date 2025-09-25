@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <header class="app-header">
   <div class="logo">
     <i class="fas fa-stethoscope logo-icon"></i>
@@ -6,15 +5,14 @@
   </div>
 
   <nav class="nav-links">
-    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-    <a routerLink="/patients" routerLinkActive="active">Patients</a>
-    <a routerLink="/appointments" routerLinkActive="active">Appointments</a>
-    <a routerLink="/reports" routerLinkActive="active">Reports</a>
+    <a routerLink="/dashboard" routerLinkActive="active" (click)="navigateToDashboard()">Dashboard</a>
+    <a routerLink="/patients" routerLinkActive="active" (click)="navigateToPatients()">Patients</a>
+    <a routerLink="/appointments" routerLinkActive="active" (click)="navigateToAppointments()">Appointments</a>
+    <a routerLink="/reports" routerLinkActive="active" (click)="navigateToReports()">Reports</a>
   </nav>
 
   <div class="user-section">
     <button class="avatar-icon" (click)="toggleUserMenu()" aria-label="User menu">
-      <!-- Simple user icon (Unicode person) -->
       &#128100;
     </button>
 
@@ -23,12 +21,8 @@
         <strong>Dr. Sarah Johnson</strong><br />
         <small>Cardiologist</small>
       </div>
-      <button (click)="onSettings()">
-        ⚙️ Settings
-      </button>
-      <button (click)="onLogout()">
-        🚪 Logout
-      </button>
+      <button (click)="onSettings()">⚙️ Settings</button>
+      <button (click)="onLogout()">🚪 Logout</button>
     </div>
   </div>
 </header>

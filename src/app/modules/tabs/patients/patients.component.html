@@ -1,1 +1,227 @@
-<p>patients works!</p>
+<!-- <!DOCTYPE html>
+<div class="patients-container">
+  <h2>Patients List</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let patient of patients">
+        <td>{{ patient.id }}</td>
+        <td>{{ patient.name }}</td>
+        <td>{{ patient.age }}</td>
+        <td>{{ patient.condition }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div> -->
+<div class="patients-container">
+    <!-- Header -->
+    <div class="patients-header">
+        <h2>Patients Management</h2>
+        <div class="header-actions">
+            <button class="btn btn-primary" (click)="openAddPatientModal()">
+                <i class="icon-plus"></i> Add New Patient
+            </button>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="search-filters-section">
+        <div class="search-box">
+            <i class="icon-search"></i>
+            <input 
+                type="text" 
+                [(ngModel)]="searchTerm" 
+                (input)="onSearch()"
+                placeholder="Search patients by name, ID, or condition..."
+                class="search-input">
+        </div>
+        
+        <div class="filters">
+            <select [(ngModel)]="statusFilter" (change)="applyFilters()" class="filter-select">
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+            </select>
+            
+            <select [(ngModel)]="departmentFilter" (change)="applyFilters()" class="filter-select">
+                <option value="all">All Departments</option>
+                <option value="cardiology">Cardiology</option>
+                <option value="neurology">Neurology</option>
+                <option value="orthopedics">Orthopedics</option>
+                <option value="pediatrics">Pediatrics</option>
+            </select>
+            
+            <select [(ngModel)]="sortBy" (change)="applyFilters()" class="filter-select">
+                <option value="name">Sort by Name</option>
+                <option value="date">Sort by Date</option>
+                <option value="status">Sort by Status</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Patients Grid/List -->
+    <div class="patients-content">
+        <!-- Statistics Cards -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-value">{{ totalPatients }}</div>
+                <div class="stat-label">Total Patients</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ activePatients }}</div>
+                <div class="stat-label">Active Patients</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ newThisMonth }}</div>
+                <div class="stat-label">New This Month</div>
+            </div>
+        </div>
+
+        <!-- Patients Table -->
+        <div class="patients-table-container">
+            <table class="patients-table">
+                <thead>
+                    <tr>
+                        <th (click)="sortPatients('name')" class="sortable">
+                            Patient Name
+                            <i class="sort-icon" [class.asc]="sortBy === 'name' && sortAsc" 
+                               [class.desc]="sortBy === 'name' && !sortAsc"></i>
+                        </th>
+                        <th>Patient ID</th>
+                        <th>Date of Birth</th>
+                        <th>Contact</th>
+                        <th>Primary Physician</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let patient of filteredPatients" 
+                        [class.selected]="selectedPatient?.id === patient.id"
+                        (click)="selectPatient(patient)">
+                        <td>
+                            <div class="patient-info">
+                                <div class="patient-avatar">{{ getInitials(patient.firstName, patient.lastName) }}</div>
+                                <div class="patient-name">
+                                    {{ patient.firstName }} {{ patient.lastName }}
+                                    <div class="patient-email">{{ patient.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ patient.patientId }}</td>
+                        <td>{{ formatDate(patient.dateOfBirth) }}</td>
+                        <td>{{ patient.phone }}</td>
+                        <td>{{ patient.primaryPhysician }}</td>
+                        <td>
+                            <span class="status-badge" [class.active]="patient.status === 'active'">
+                                {{ patient.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon" (click)="viewPatientDetails(patient); $event.stopPropagation()" 
+                                        title="View Details">
+                                    <i class="icon-eye"></i>
+                                </button>
+                                <button class="btn-icon" (click)="editPatient(patient); $event.stopPropagation()" 
+                                        title="Edit Patient">
+                                    <i class="icon-edit"></i>
+                                </button>
+                                <button class="btn-icon danger" (click)="deletePatient(patient); $event.stopPropagation()" 
+                                        title="Delete Patient">
+                                    <i class="icon-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div *ngIf="filteredPatients.length === 0" class="no-patients">
+                <i class="icon-users"></i>
+                <h3>No patients found</h3>
+                <p>Try adjusting your search criteria or add a new patient.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Patient Details Modal -->
+    <div *ngIf="showPatientModal" class="modal-overlay" (click)="closeModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Patient Details</h3>
+                <button class="btn-close" (click)="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" *ngIf="selectedPatient">
+                <!-- Patient details content here -->
+                <div class="patient-details">
+                    <div class="detail-section">
+                        <h4>Personal Information</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>Full Name:</label>
+                                <span>{{ selectedPatient.firstName }} {{ selectedPatient.lastName }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Patient ID:</label>
+                                <span>{{ selectedPatient.patientId }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Date of Birth:</label>
+                                <span>{{ formatDate(selectedPatient.dateOfBirth) }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Gender:</label>
+                                <span>{{ selectedPatient.gender }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h4>Contact Information</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>Phone:</label>
+                                <span>{{ selectedPatient.phone }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Email:</label>
+                                <span>{{ selectedPatient.email }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Address:</label>
+                                <span>{{ selectedPatient.address }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h4>Medical Information</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>Primary Physician:</label>
+                                <span>{{ selectedPatient.primaryPhysician }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Insurance:</label>
+                                <span>{{ selectedPatient.insurance }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Last Visit:</label>
+                                <span>{{ formatDate(selectedPatient.lastVisit) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,1 +1,34 @@
-<p>header works!</p>
+<!DOCTYPE html>
+<header class="app-header">
+  <div class="logo">
+    <i class="fas fa-stethoscope logo-icon"></i>
+    <span>HealthCare Pro</span>
+  </div>
+
+  <nav class="nav-links">
+    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+    <a routerLink="/patients" routerLinkActive="active">Patients</a>
+    <a routerLink="/appointments" routerLinkActive="active">Appointments</a>
+    <a routerLink="/reports" routerLinkActive="active">Reports</a>
+  </nav>
+
+  <div class="user-section">
+    <button class="avatar-icon" (click)="toggleUserMenu()" aria-label="User menu">
+      <!-- Simple user icon (Unicode person) -->
+      &#128100;
+    </button>
+
+    <div class="user-menu" [class.show]="isUserMenuOpen">
+      <div class="dropdown-username">
+        <strong>Dr. Sarah Johnson</strong><br />
+        <small>Cardiologist</small>
+      </div>
+      <button (click)="onSettings()">
+        ⚙️ Settings
+      </button>
+      <button (click)="onLogout()">
+        🚪 Logout
+      </button>
+    </div>
+  </div>
+</header>

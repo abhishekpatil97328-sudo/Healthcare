@@ -1,1 +1,45 @@
-<p>dashboard works!</p>
+<!DOCTYPE html>
+
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1> Dashboard</h1>
+    <div class="user-info">
+      <span class="user-name">Dr. Sarah Johnson</span>
+    </div>
+  </header>
+
+ <section class="dashboard-cards">
+  <div class="card" [@fadeIn] routerLink="/patients" style="cursor:pointer;">
+    <h2>Patients</h2>
+    <p class="card-value">124</p>
+    <span class="card-subtext">Total Active Patients</span>
+  </div>
+
+  <div class="card" [@fadeIn] routerLink="/appointments" style="cursor:pointer;">
+    <h2>Appointments</h2>
+    <p class="card-value">8</p>
+    <span class="card-subtext">Today</span>
+  </div>
+
+  <div class="card" [@fadeIn] routerLink="/reports" style="cursor:pointer;">
+    <h2>Reports</h2>
+    <p class="card-value">56</p>
+    <span class="card-subtext">Pending Review</span>
+  </div>
+
+  <div class="card" [@fadeIn]>
+    <h2>Notifications</h2>
+    <p class="card-value">3</p>
+    <span class="card-subtext">New Messages</span>
+  </div>
+</section>
+
+  <section class="dashboard-appointments">
+    <h3>Upcoming Appointments</h3>
+    <ul class="appointments-list">
+      <li class="appointment-item" *ngFor="let appt of appointments" [@fadeIn]>
+        <strong>{{ appt.time }}</strong> - {{ appt.patient }} ({{ appt.reason }})
+      </li>
+    </ul>
+  </section>
+</div>
